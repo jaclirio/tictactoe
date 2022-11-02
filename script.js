@@ -12,6 +12,9 @@ const WINNING_COMBINATIONS = [
 ]
 const cellElements = document.querySelectorAll('[data-cell]')
 const board = document.getElementById('board')
+const restartButton=document.getElementById('restartButton')
+const winningMessageElement = document.getElementById('winningMessage')
+const winningMessageText = document.querySelector('[data-winning-text]')
 let oTurn
 
 let setBoardHover = () => {  //set function first before being called
@@ -27,12 +30,33 @@ let setBoardHover = () => {  //set function first before being called
 let startGame = () => {
     oTurn = false
     cellElements.forEach(cell => {
-    cell.addEventListener('click', handleClick, {once:true}) //click event once per cell
+        cell.classList.remove(X_CLASS) //clear cell after restart
+        cell.classList.remove(O_CLASS) //same here
+        cell.removeEventListener('click', handleClick) //clear event in console
+        cell.addEventListener('click', handleClick, {once:true}) //click event once per cell
     })
     setBoardHover()  //function being called, need to set function first. initialization error will shot on log
+    winningMessageElement.classList.remove('show')
+}
+
+let endGame = (draw) => {
+    if (draw) {
+        winningMessageText.innerText='Draw!'
+    } else {
+        winningMessageText.innerText=`${oTurn?"O's": "X's"} Wins!`  //Output end of game
+    }
+    winningMessageElement.classList.add('show')
+}
+
+let isDraw = () => {
+    return [...cellElements].every(cell => {
+        return cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS) //cells filled but no winner
+    })
 }
 
 startGame()
+
+restartButton.addEventListener('click', startGame)
 
 function handleClick(e) { //handleClick(eventlistener), e=eventlistener
     const cell= e.target
@@ -41,12 +65,13 @@ function handleClick(e) { //handleClick(eventlistener), e=eventlistener
     placeMark(cell, currentClass)
     //check for win
     if (checkWin(currentClass)) {
-        console.log('winner')
+        endGame(false)
+    } else if(isDraw()){  //check for draw
+        endGame(true)
+    } else { //switch turns
+        swapTurns()
+        setBoardHover()
     }
-    //check for draw
-    //switch turns
-    swapTurns()
-    setBoardHover()
 }
 
 let placeMark = (cell, currentClass) => { //placing on cell
