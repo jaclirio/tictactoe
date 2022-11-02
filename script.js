@@ -13,8 +13,8 @@ const WINNING_COMBINATIONS = [
 const cellElements = document.querySelectorAll('[data-cell]')
 const board = document.getElementById('board')
 const restartButton=document.getElementById('restartButton')
-const winningMessageElement = document.getElementById('winningMessage')
-const winningMessageText = document.querySelector('[data-winning-text]')
+const winningMessageElement = document.getElementById('winningMessage') //for div ID
+const winningMessageText = document.querySelector('[data-winning-text]') //for div DATA
 let oTurn
 
 let setBoardHover = () => {  //set function first before being called
